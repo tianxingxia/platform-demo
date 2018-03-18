@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>页面未找到</title>
+</head>
+<body onload="load()">
+	<script>
+		function load() {
+			if (window.location.href.indexOf("ticket")!=-1) {
+				window.location.href = window.location.href.substring(0,
+						window.location.href.indexOf("?"))
+						+ window.location.href.substring(window.location.href
+								.indexOf("#"), window.location.href.length);
+			}
+		}
+	</script>
+	系统错误！
+</body>
+</html>

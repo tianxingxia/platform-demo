@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<portable-config>
+	<config-file path="WEB-INF/classes/constants.properties">
+		<replace key="swagger.switch">true</replace>
+	</config-file>
+</portable-config>  

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" packages="com.xtc.watch.otaplatform.common.log4j">
+	<properties>
+		<!-- <Property name="LOG_HOME">/data/logs/watchback</Property> -->
+	</properties>
+	<!-- 
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level %class{36} %L %M &#45;&#45; %msg%xEx%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+				<SizeBasedTriggeringPolicy size="512000 KB"/>
+			</Policies>
+			<ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+		</Console>
+		<RollingRandomAccessFile name="service_debug" immediateFlush="false" fileName="${LOG_HOME}/debug.log"
+								 filePattern="${LOG_HOME}/debug.log.%d{yyyy-MM-dd}.log.gz">
+			<PatternLayout>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %class{36} %L %M &#45;&#45; %msg%xEx%n</pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="512000 KB"/>
+			</Policies>
+			<Filters>
+				<ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
+			</Filters>
+		</RollingRandomAccessFile>
+		<RollingRandomAccessFile name="service_info" immediateFlush="false" fileName="${LOG_HOME}/info.log"
+								 filePattern="${LOG_HOME}/info.log.%d{yyyy-MM-dd}.log.gz">
+			<PatternLayout>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %class{36} %L %M &#45;&#45; %msg%xEx%n</pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1" modulate="true" />
+				<SizeBasedTriggeringPolicy size="512000 KB"/>
+			</Policies>
+			<Filters>
+				<ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+			</Filters>
+		</RollingRandomAccessFile>
+	</Appenders>
+	<Loggers>
+		<Root level="debug">
+			<AppenderRef ref="service_debug" />
+			<AppenderRef ref="service_info" />
+			<AppenderRef ref="Console" />
+		</Root>
+	</Loggers>
+     -->
+	
+	<Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %c{1}:%l - %m%n" />
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="error">
+            <AppenderRef ref="Console" />
+        </Root>
+        <logger name="com.xtc.watch.otaplatform.business.**.dao" level="error"
+            additivity="false">
+            <appender-ref ref="Console" />
+        </logger>
+    </Loggers> 
+</Configuration>

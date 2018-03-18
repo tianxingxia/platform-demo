@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.yk.platform.business.excel.dao.ExcelOpLogDao">
+	<insert id="insert" parameterType="com.xtc.watch.platform.business.excel.entity.ExcelOpLog">
+		INSERT INTO t_excel_op_log
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="opId != null and opId != ''">
+				id,
+			</if>
+			<if test="opUser != null and opUser != ''">
+				op_user,
+			</if>
+			<if test="opType != null">
+				op_type,
+			</if>
+			<if test="opResult != null">
+				op_result,
+			</if>
+			<if test="opDate != null">
+				op_date,
+			</if>
+			<if test="totalRows != null">
+				total_rows,
+			</if>
+			<if test="errorCount != null">
+				error_count,
+			</if>
+			<if test="logDesc != null and logDesc != ''">
+				log_desc,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="opId != null and opId != ''">
+				#{opId},
+			</if>
+			<if test="opUser != null and opUser != ''">
+				#{opUser},
+			</if>
+			<if test="opType != null">
+				#{opType},
+			</if>
+			<if test="opResult != null">
+				#{opResult},
+			</if>
+			<if test="opDate != null">
+				#{opDate},
+			</if>
+			<if test="totalRows != null">
+				#{totalRows},
+			</if>
+			<if test="errorCount != null">
+				#{errorCount},
+			</if>
+			<if test="logDesc != null and logDesc != ''">
+				#{logDesc},
+			</if>
+		</trim>
+	</insert>
+</mapper>

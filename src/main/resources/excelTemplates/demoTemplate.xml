@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<excel>
+	<sheet id="demo" name="示例模板" class="com.yk.platform.business.demo.entity.Demo">
+		<field label="* 用户名" name="username" nullAble="false"></field>
+		<field label="* 密码" name="password" nullAble="false"></field>
+	</sheet>
+</excel>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.yk.platform.business.constant.dao.ConstantDao">
+	
+	<select id="getConstant" parameterType="java.lang.String" resultType="Constant"  >
+		select
+			k,
+			v,
+			is_visible isVisible,
+			description
+		from
+			t_constant
+		where
+			k = #{k}
+	</select>
+	
+	<select id="getAllConstant" resultType="Constant" >
+		select
+			k,
+			v,
+			is_visible isVisible,
+			description
+		from
+			t_constant
+	</select>
+	
+	<insert id="addConstant" parameterType="Constant">
+		insert into t_constant
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="k != null and k != ''">
+				k,
+			</if>
+			<if test="v != null and v != ''">
+				v,
+			</if>
+			<if test="isVisible != null and isVisible != ''">
+				is_visible,
+			</if>
+			<if test="description != null and description != ''">
+				description,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="k != null and k != ''">
+				#{k},
+			</if>
+			<if test="v != null and v != ''">
+				#{v},
+			</if>
+			<if test="isVisible != null and isVisible != ''">
+				#{isVisible},
+			</if>
+			<if test="description != null and description != ''">
+				#{description},
+			</if>
+		</trim>
+	</insert>
+	
+	<update id="updateConstant" parameterType="Constant">
+		update t_constant
+		<set>
+			<if test="k != null and k != ''">
+				k = #{k},
+			</if>
+			<if test="v != null and v != ''">
+				v = #{v},
+			</if>
+			<if test="isVisible != null and isVisible != ''">
+				is_visible = #{isVisible},
+			</if>
+			<if test="description != null and description != ''">
+				description = #{description},
+			</if>
+		</set>
+		where k = #{k}
+	</update>
+	
+	<delete id="deleteConstant" parameterType="String">
+		delete from t_constant where k = #{k}
+	</delete>
+</mapper>

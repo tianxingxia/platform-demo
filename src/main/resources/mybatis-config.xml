@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE configuration   
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"   
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">   
+<configuration>
+     <settings>
+          <setting name="mapUnderscoreToCamelCase" value="true" />
+          <setting name="logImpl" value="LOG4J"/>
+     </settings>
+     <typeAliases>  
+     	<typeAlias type="com.yk.platform.common.Qo" alias="Qo"/>
+     	<typeAlias type="com.yk.platform.common.Page" alias="Page"/>
+     	<typeAlias type="com.yk.platform.business.excel.entity.ExcelOpLog" alias="ExcelOpLog" />
+      	<typeAlias type="com.yk.platform.business.excel.entity.ExcelOpLogDetail" alias="ExcelOpLogDetail" />
+      	<typeAlias type="com.yk.platform.business.constant.entity.Constant" alias="Constant"/>
+      	<typeAlias type="com.yk.platform.business.log.entity.OperateLog" alias="OperateLog"/>
+      	<typeAlias type="com.yk.platform.business.file.entity.SysFile" alias="SysFile"/>
+	</typeAliases>
+</configuration>

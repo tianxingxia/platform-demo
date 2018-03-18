@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="com.yk.platform.business.excel.dao.ExcelOpLogDetailDao">
+
+	<select id="getList" parameterType="com.xtc.watch.platform.common.Qo" resultType="com.xtc.watch.platform.business.excel.entity.ExcelOpLogDetail">
+		SELECT
+			row_num rowNum,
+			cell_num colNum,
+			err_msg errMsg
+		FROM t_excel_op_log_detail
+		<where>
+			<if test="logId != null and logId != ''">
+				AND log_id = #{logId}
+			</if>
+			<if test="rowNum != null">
+				AND row_num = #{rowNum}
+			</if>
+			<if test="colNum != null">
+				AND cell_num = #{colNum}
+			</if>
+		</where>
+		<if test="sort != null"> order by ${sort.fieldName} ${sort.sort}</if>
+
+		<if test="page != null">
+			LIMIT #{page.startIndex}, #{page.pageSize}
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="com.xtc.watch.platform.common.Qo" resultType="java.lang.Long">
+		SELECT
+			COUNT(1)
+		FROM t_excel_op_log_detail
+		<where>
+			<if test="logId != null and logId != ''">
+				AND log_id = #{logId}
+			</if>
+			<if test="rowNum != null">
+				AND row_num = #{rowNum}
+			</if>
+			<if test="colNum != null">
+				AND cell_num = #{colNum}
+			</if>
+		</where>
+	</select>
+
+	<insert id="insertExcelOLDBatch" parameterType="java.util.List">
+		INSERT INTO t_excel_op_log_detail
+			(
+				log_id,
+				row_num,
+				cell_num,
+				err_msg,
+				err_date
+			)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator="," >
+			(
+				#{item.logId},
+				#{item.rowNum},
+				#{item.colNum},
+				#{item.errMsg},
+				#{item.errDate}
+			)
+		</foreach>
+	</insert>
+</mapper>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	    http://www.springframework.org/schema/beans/spring-beans.xsd
+	    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+	    http://www.springframework.org/schema/mvc 
+	    http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd 
+	    http://www.springframework.org/schema/aop  
+	    http://www.springframework.org/schema/aop/spring-aop-3.1.xsd  
+	    http://www.springframework.org/schema/context 
+	    http://www.springframework.org/schema/context/spring-context.xsd
+	    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+	    http://www.springframework.org/schema/task
+		http://www.springframework.org/schema/task/spring-task-3.1.xsd
+	    http://www.springframework.org/schema/cache 
+	    http://www.springframework.org/schema/cache/spring-cache-3.1.xsd">
+
+	<aop:aspectj-autoproxy />
+	<task:annotation-driven />
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- 加载properties配置文件 -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:*.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<import resource="dataSource.xml"/>
+
+	<!-- 配置SqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" >
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+	</bean>
+
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="dynamicSqlSessionTemplate"
+		class="org.springmore.core.datasource.DynamicSqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionTemplate" />
+	</bean>
+
+	<!-- 配置事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	<!-- mybatis auto register -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.xtc.watch.platform.business.*.dao" />
+		<property name="sqlSessionTemplateBeanName" value="dynamicSqlSessionTemplate" />
+	</bean>
+	<!-- import annotions -->
+	<context:component-scan base-package="com.xtc">
+	</context:component-scan>
+    <mvc:annotation-driven />
+    <mvc:default-servlet-handler />
+	
+	<!-- 定时任务配置 -->
+    <bean id="demoJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass"
+            value="com.xtc.watch.platform.common.jobs.DemoJob" />
+    </bean>
+    <bean id="triggerDemoJob" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail">
+            <ref bean="demoJob" />
+        </property>
+        <property name="cronExpression">
+            <!--每一个小时执行一次 -->
+            <value>0 0 0/1 * * ?</value>
+        </property>
+    </bean>
+	<bean id="SpringJobSchedulerFactoryBean"
+        class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+        destroy-method="destroy">
+        <property name="triggers">
+            <list>
+                <ref bean="triggerDemoJob" />
+            </list>
+        </property>
+        <property name="quartzProperties">
+            <props>
+                <!-- 禁止更新 -->
+                <prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
+            </props>
+        </property>
+    </bean>
+
+	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate" />
+
+	<!-- SpringMVC上传文件时，需要配置MultipartResolver处理器 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8" />
+		<!-- 指定所上传文件的总大小不能超过100MB。注意maxUploadSize属性的限制不是针对单个文件，而是所有文件的容量之和 -->
+		<!-- set the max upload size2GB -->
+		<property name="maxUploadSize">
+			<value>2147483648</value>
+		</property>
+		<property name="maxInMemorySize">
+			<value>4096</value>
+		</property>
+	</bean>
+	
+	<bean class="com.eebbk.edu.redis.JedisWrapperInit">
+        <property name="jedisConfig">
+            <map>
+                <entry key="demoRedis" value="redis/jedis_demo_cache.properties"></entry>
+                <entry key="platformRedis" value="redis/jedis_platform_cache.properties"></entry>
+            </map>
+        </property>
+    </bean>
+
+	<!-- 其他数据源 -->
+	<import resource="applicationContext_log.xml" /> 
+
+	<!-- 定义日志通知，将日志切面交给Spring容器管理 -->
+	<bean id="logAdvice" class="com.xtc.watch.platform.common.aop.LogAdvice"></bean>
+
+	<!-- 进行aop配置 -->
+	<aop:config>
+		<!-- 配置日志切面 -->
+		<aop:aspect id="logaop" ref="logAdvice">
+			<aop:pointcut id="logpointcut"
+				expression="execution(* com.xtc.watch.platform.business.*.service.impl.*.*(..)) and @annotation(operateLogType)" />
+			<!-- 将LogAdvice日志通知中的myAfterReturnAdvice方法指定为后置通知 -->
+			<aop:after-returning method="afterReturnAdvice"
+				pointcut-ref="logpointcut" />
+		</aop:aspect>
+	</aop:config>
+	
+	<!-- 权限验证拦截器 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/demo/**"/>
+			<bean class="com.xtc.watch.platform.filter.MyBaseAuthorityFilter">
+				<property name="serverAddress" value="${cas.serverAddress}" />
+				<property name="moduleId" value="${cas.moduleId}" />
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+</beans>
